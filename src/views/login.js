@@ -2,17 +2,29 @@ import React from "react";
 import Card from "../componets/card";
 import FormGroup from "../componets/form-group";
 import {withRouter} from 'react-router-dom'
+import axios from "axios";
+
+
+
+
 
 class Login extends React.Component {
 
   state = {
     email: '',
-    senha: ''
+    senha: '',
+    mensagemErro: null
   }
 
   entrar = () => {
-    console.log('Email: ', this.state.email)
-    console.log('Email: ', this.state.senha)
+    axios.post('http://localhost:8080/api/usuarios/autenticar',{
+      email: this.state.email,
+      senha: this.state.senha
+    }).then(response => {
+      this.props.history.push('/home')
+    }).catch(erro => {
+      this.setState({mensagemErro: erro.response.data})
+    })
   }
 
 
@@ -30,6 +42,9 @@ class Login extends React.Component {
             style={{ position: "relative", left: "300px" }}>
             <Card title="Login">
               <div className="row">
+                <div className="row">
+                  <span>{this.state.mensagemErro}</span>
+                </div>
                 <div className="col-lg-12">
                   <div className="bs-component">
                     <fieldset>
