@@ -10,10 +10,12 @@ class ApiService {
     this.apiurl = apiurl;
   }
 
-  post(url, objeto) {
+  post(url, objeto) { /* aciona o end point no back end (http://localhost:8080/apiurl/url) ver detalhes em: usuarioService.js */
     const requestUrl = `${this.apiurl}${url}`
-    return httpClient.post(requestUrl, objeto);
+    return httpClient.post(requestUrl, objeto); 
   }
+
+  
 
   put(url, objeto) {
     const requestUrl = `${this.apiurl}${url}`
