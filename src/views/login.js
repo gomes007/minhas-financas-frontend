@@ -2,10 +2,8 @@ import React from "react";
 import Card from "../componets/card";
 import FormGroup from "../componets/form-group";
 import {withRouter} from 'react-router-dom'
-import axios from "axios";
 
-
-
+import UsuarioService from "../app/service/usuarioService";
 
 
 class Login extends React.Component {
@@ -16,15 +14,23 @@ class Login extends React.Component {
     mensagemErro: null
   }
 
+  constructor(){
+    super();
+    this.service = new UsuarioService();
+  }
+
   entrar = () => {
-    axios.post('http://localhost:8080/api/usuarios/autenticar',{
-      email: this.state.email,
-      senha: this.state.senha
+    this.service.autenticar({
+        email: this.state.email,
+        senha: this.state.senha
     }).then(response => {
-      this.props.history.push('/home')
+        localStorage.setItem('_usuario_logado', JSON.stringify(response.data))
+        this.props.history.push('/home')
     }).catch(erro => {
-      this.setState({mensagemErro: erro.response.data})
+        this.setState({mensagemErro: erro.response.data})
     })
+
+
   }
 
 
