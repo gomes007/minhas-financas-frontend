@@ -1,7 +1,9 @@
 import React from "react";
 import Card from "../componets/card";
 import FormGroup from "../componets/form-group";
-import {withRouter} from 'react-router-dom'
+import {withRouter} from 'react-router-dom';
+import UsuarioService from "../service/usuarioService";
+import {mensagemSucesso, mensagemErro} from '../componets/toastr';
 
 
 class CadastroUsuario extends React.Component {
@@ -13,13 +15,61 @@ class CadastroUsuario extends React.Component {
         senhaRepeticao : ''
     }
 
+    constructor(){
+      super();
+      this.service = new UsuarioService();
+    }
+
+    valiar(){
+
+      const msg = []
+
+      if (!this.state.nome) {
+          msg.push('campo nao obrigatorio')
+      }
+
+      if (!this.state.email) {
+        msg.push('campo obrigatorio')
+      } else if(!this.state.email.match(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]/)){
+        msg.push('informe email valido')
+      }
+
+      if (!this.state.senha || !this.state.senhaRepeticao) {
+        msg.push('digite a senha 2x')
+      } else if (this.state.senha !== this.state.senhaRepeticao) {
+        msg.push('as senhas não batem')
+      }
+
+    }
+
     cadastrar = () => {
-        console.log(this.state)
+
+      const msg = this.valiar();
+      if (msg && msg.length > 0) {
+        msg.forEach((msg, index) => {
+          mensagemErro(msg)
+        });
+        return false;
+      }
+
+      const usuario = {
+        nome: this.state.nome,
+        email: this.state.email,
+        senha: this.senha
+
+      }
+        this.service.salvar(usuario)
+            .then(response => {
+              mensagemSucesso('Usuario cadastrado com sucesso! faça login para acessar o sistema.')
+              this.props.history.push('/login') 
+            }).catch(erro => {
+              mensagemErro(erro.response.data)
+          })
     }
 
 
     cancelar = () => {
-        this.props.history.push('/login')
+        this.props.history.push('/login') 
     }
 
   render() {
