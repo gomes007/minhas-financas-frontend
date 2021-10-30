@@ -20,7 +20,8 @@ class CadastroUsuario extends React.Component {
       this.service = new UsuarioService();
     }
 
-    valiar(){
+
+    validar(){
 
       const msg = []
 
@@ -40,11 +41,14 @@ class CadastroUsuario extends React.Component {
         msg.push('as senhas não batem')
       }
 
+      return msg;
+
     }
+
 
     cadastrar = () => {
 
-      const msg = this.valiar();
+      const msg = this.validar();
       if (msg && msg.length > 0) {
         msg.forEach((msg, index) => {
           mensagemErro(msg)
@@ -55,7 +59,7 @@ class CadastroUsuario extends React.Component {
       const usuario = {
         nome: this.state.nome,
         email: this.state.email,
-        senha: this.senha
+        senha: this.state.senha
 
       }
         this.service.salvar(usuario)
@@ -100,16 +104,14 @@ class CadastroUsuario extends React.Component {
                            id="inputSenha" 
                            name="senha"
                            className="form-control"
-                           onChange={e => this.setState({senha: e.target.value})}
-                           placeholder="Digite a Senha"/>
+                           onChange={e => this.setState({senha: e.target.value})}/>
                   </FormGroup>
                   <FormGroup label="Repita a Senha: *" htmlFor="inputRepitaSenha">
                     <input type="password" 
                            id="inputRepitaSenha" 
-                           name="senha"
+                           name="repitaSenha"
                            className="form-control"
-                           onChange={e => this.setState({senhaRepeticao: e.target.value})}
-                           placeholder="Confirme a Senha"/>
+                           onChange={e => this.setState({senhaRepeticao: e.target.value})} />
                   </FormGroup>
                   <button onClick={this.cadastrar} type="button" className="btn btn-success">Salvar</button>
                   <button onClick={this.cancelar} type="button" className="btn btn-danger">Cancelar</button>
