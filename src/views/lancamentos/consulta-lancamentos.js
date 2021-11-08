@@ -32,6 +32,10 @@ class ConsultaLancamentos extends React.Component {
     this.service = new LancamentoService();
   }
 
+  preparaFormularioCadastro = () => {
+    this.props.history.push('/cadastro-lancamentos')
+  }
+
   buscar = () => {
     if (!this.state.ano) {
       messages.mensagemErro('o preenchimento do campo ano é obrigatorio')
@@ -61,7 +65,7 @@ class ConsultaLancamentos extends React.Component {
 
 
   editar = (id) => {
-    console.log('editando',id)
+    this.props.history.push(`/cadastro-lancamentos/${id}`)
   }
 
 
@@ -146,7 +150,7 @@ class ConsultaLancamentos extends React.Component {
               <br />
 
               <button onClick={this.buscar} type="button" className="btn btn-success btn-space">Buscar</button>
-              <button type="button" className="btn btn-danger">Cadastrar</button>
+              <button onClick={this.preparaFormularioCadastro} type="button" className="btn btn-danger">Cadastrar</button>
 
             </div>
           </div>
