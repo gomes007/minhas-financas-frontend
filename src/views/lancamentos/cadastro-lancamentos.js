@@ -12,13 +12,15 @@ import LocalStorageSerice from '../../service/localstorageService'
 class CadastroLancamentos extends React.Component {
 
     state = {
+      id: null,
       usuario: null,
       descricao: '',
       valor: '',
       mes: '',
       ano: '',
       tipo: '',
-      status: ''
+      status: '',
+      atualizando: false
 
     }
 
@@ -42,6 +44,22 @@ class CadastroLancamentos extends React.Component {
 
     }
 
+    atualizar = () => {
+            
+      const {descricao, valor, mes, ano, tipo, id, usuario, status} = this.state
+      const lancamento = {descricao, valor, mes, ano, tipo, id, usuario, status}
+
+      this.service
+        .atualizar(lancamento)
+        .then(response => {
+            this.props.history.push('/consulta-lancamentos')
+            messages.mensagemSucesso('atualizado com sucesso!')
+        }).catch(error => {
+          messages.mensagemErro(error.response.data)
+        })
+
+    }
+
     constructor(){
         super();
         this.service = new LancamentoService();
@@ -50,7 +68,14 @@ class CadastroLancamentos extends React.Component {
 
     componentDidMount(){
       const params = this.props.match.params
-      console.log(params)
+      if(params.id){
+        this.service.obterPorId(params.id)
+            .then(response => {
+              this.setState({...response.data, atualizando: true})
+            }).catch(erros => {
+              messages.mensagemErro(erros.response.data)
+            })
+      }
     }
 
 
@@ -69,7 +94,7 @@ class CadastroLancamentos extends React.Component {
       const meses = this.service.obterListaMeses();
 
     return (
-      <Card title="Cadastro de Lancamentos">
+      <Card title={this.state.atualizando ? 'Atualizando Lancamentos' : 'Cadastro de Lancamentos'}>
         <div className="row">
           <div className="col-md-6">
             <FormGroup id="inputDescricao" label="Descricao: *">
@@ -82,7 +107,7 @@ class CadastroLancamentos extends React.Component {
         </div>
 
         <div className="row">
-          <div className="col-md-1">
+          <div className="col-md-2">
             <FormGroup id="inputAno" label="Ano: *">
               <input id="inputAno" type="text" className="form-control" 
                       value={this.state.ano}
@@ -128,7 +153,10 @@ class CadastroLancamentos extends React.Component {
           </div>
         </div>
         <br/>
-        <button className="btn btn-success btn-space" onClick={this.submit}>Salvar</button>
+        {this.state.atualizando ? 
+          (<button className="btn btn-primary btn-space" onClick={this.atualizar}>Atualizar</button>)
+            :
+          (<button className="btn btn-success btn-space" onClick={this.submit}>Salvar</button>)}        
         <button onClick={e => this.props.history.push('/consulta-lancamentos')} className="btn btn-secondary">Cancelar</button>
       </Card>
     );
