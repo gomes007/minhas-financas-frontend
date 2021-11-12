@@ -1,4 +1,5 @@
 import ApiService from "./apiservices";
+import ErroValidacao from "../exception/erroValidacao";
 
 export default class LancamentoService extends ApiService {
   constructor() {
@@ -23,24 +24,52 @@ export default class LancamentoService extends ApiService {
     ];
   }
 
-  obterListaTipos(){
-      return [
-        {label: 'Selecione...', value:''},
-        {label: 'Despesa', value: 'DESPESA'},
-        {label: 'Receita', value:'RECEITA'}
-    ]
+  obterListaTipos() {
+    return [
+      { label: "Selecione...", value: "" },
+      { label: "Despesa", value: "DESPESA" },
+      { label: "Receita", value: "RECEITA" },
+    ];
   }
 
-  obterPorId(id){
-    return this.get(`/${id}`)
+  obterPorId(id) {
+    return this.get(`/${id}`);
   }
 
-  salvar(lancamento){
-    return this.post('/', lancamento)
+  validar(lancamento) {
+    const erros = [];
+
+    if (!lancamento.ano) {
+      erros.push("informe o ano!");
+    }
+
+    if (!lancamento.mes) {
+      erros.push("informe o mes!");
+    }
+
+    if (!lancamento.descricao) {
+      erros.push("informe a descricao!");
+    }
+
+    if (!lancamento.valor) {
+      erros.push("informe o valor!");
+    }
+
+    if (!lancamento.tipo) {
+      erros.push("informe o tipo!");
+    }
+
+    if (erros && erros.length > 0) {
+      throw new ErroValidacao(erros);
+    }
   }
 
-  atualizar(lancamento){
-    return this.put(`/${lancamento.id}`, lancamento)
+  salvar(lancamento) {
+    return this.post("/", lancamento);
+  }
+
+  atualizar(lancamento) {
+    return this.put(`/${lancamento.id}`, lancamento);
   }
 
   consultar(lancamentoFiltro) {
@@ -63,14 +92,13 @@ export default class LancamentoService extends ApiService {
     }
 
     if (lancamentoFiltro.descricao) {
-        params = `${params}&descricao=${lancamentoFiltro.descricao}`;
-      }
+      params = `${params}&descricao=${lancamentoFiltro.descricao}`;
+    }
 
     return this.get(params);
   }
 
-  deletar(id){
-      return this.delete(`/${id}`)
+  deletar(id) {
+    return this.delete(`/${id}`);
   }
-
 }
