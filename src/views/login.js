@@ -4,8 +4,11 @@ import FormGroup from "../componets/form-group";
 import {withRouter} from 'react-router-dom'
 
 import UsuarioService from "../service/usuarioService";
-import LocalStorageService from "../service/localstorageService";
+
 import {mensagemErro} from '../componets/toastr';
+
+import { AuthContext } from "../main/provedorAutenticacao";
+
 
 
 class Login extends React.Component {
@@ -26,8 +29,8 @@ class Login extends React.Component {
     this.service.autenticar({
         email: this.state.email,
         senha: this.state.senha
-    }).then(response => {
-        LocalStorageService.adicionarItem('_usuario_logado', response.data)
+    }).then(response => {        
+        this.context.iniciarSessao(response.data)
         this.props.history.push('/home')
     }).catch(erro => {
         mensagemErro(erro.response.data)
@@ -83,8 +86,10 @@ class Login extends React.Component {
           </div>
         </div>
       
-    );
+    )
   }
 }
+
+Login.contextType = AuthContext
 
 export default withRouter(Login)
